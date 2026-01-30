@@ -454,6 +454,14 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.3.2f1/Editor/Data/Tools/BuildPipeline/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.3.2f1/Editor/Data/Tools/BuildPipeline/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.3.2f1/Editor/Data/Tools/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
+"Assets/Scripts/ChessBoard.cs"
+"Assets/Scripts/ChessPieces/Bishop.cs"
+"Assets/Scripts/ChessPieces/ChessPiece.cs"
+"Assets/Scripts/ChessPieces/King.cs"
+"Assets/Scripts/ChessPieces/Knight.cs"
+"Assets/Scripts/ChessPieces/Pawn.cs"
+"Assets/Scripts/ChessPieces/Queen.cs"
+"Assets/Scripts/ChessPieces/Rook.cs"
 "Assets/TutorialInfo/Scripts/Readme.cs"
 -langversion:9.0
 /deterministic
