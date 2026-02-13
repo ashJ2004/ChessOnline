@@ -1,8 +1,13 @@
 <linker>
 	<assembly fullname="Assembly-CSharp" ignoreIfMissing="1">
 		<type fullname="ChessBoard">
+			<method name="OnDenyButton"/>
+			<method name="OnDrawButton"/>
+			<method name="OnMenuButton"/>
 			<method name="OnMenuButton"/>
 			<method name="OnRematchButton"/>
+			<method name="OnRematchButton"/>
+			<method name="OnResignButton"/>
 		</type>
 		<type fullname="GameUI">
 			<method name="OnHostBackButton"/>
@@ -11,6 +16,7 @@
 			<method name="OnOnlineConnectButton"/>
 			<method name="OnOnlineGameButton"/>
 			<method name="OnOnlineHostButton"/>
+			<method name="OnQuitButton"/>
 		</type>
 	</assembly>
 	<assembly fullname="Unity.RenderPipelines.Core.Runtime" ignoreIfMissing="1">

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Collections;
 using TMPro;
 using Unity.Networking.Transport;
 
@@ -27,10 +28,14 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private GameObject victoryScreen; 
     [SerializeField] private Transform rematchIndicator;
     [SerializeField] private Button rematchButton;
+    [SerializeField] private TMP_Text drawText;
+    [SerializeField] private Button denyButton;
+    [SerializeField] private GameObject gameDisplay;
 
     [Header("Prefabs & Materials")]
     [SerializeField] private GameObject[] prefabs;
     [SerializeField] private Material[] teamMaterials;
+    [SerializeField] private int gameTime;
 
     private List<Vector2Int> availableMoves = new List<Vector2Int>();
     private ChessPiece[,] chessPieces;
@@ -46,11 +51,13 @@ public class ChessBoard : MonoBehaviour
     private bool isWhiteTurn;
     private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
     private SpecialMove specialMove;
+    public Timer timer;
 
     private int playerCount = -1;
     private int currentTeam = -1;
     private bool localGame =true;
     private bool[] playerRematch = new bool[2];
+    private bool[] playerDraw = new bool[2];
  
 
     public void Start(){
@@ -281,6 +288,14 @@ public class ChessBoard : MonoBehaviour
 
     private void Checkmate(int team)
     {
+        gameDisplay.SetActive(false);
+        timer.gameIsRunning = false;
+        if(currentlyDragging != null)
+        {
+            currentlyDragging.SetPosition(GetTileCenter(currentlyDragging.currentX, currentlyDragging.currentY));
+            currentlyDragging = null;
+        }
+        RemoveHighlightTiles();
         DisplayVictory(team);
     }
 
@@ -292,7 +307,78 @@ public class ChessBoard : MonoBehaviour
         victoryScreen.SetActive(true);
         if(team == 1) victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "Black Team Wins";
         else if(team == 0) victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "White Team Wins";
+        else if(team == 2)
+        {
+            if (checkDraw(0))
+            {
+                victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "Draw: Insufficient Material";
+            }
+            else
+            {
+                victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "White Team Wins: Black Timeout";
+            }
+        } 
+        else if(team == 3)
+        {
+            if (checkDraw(1))
+            {
+                victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "Draw: Insufficient Material";
+            }
+            else
+            {
+                victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "Black Team Wins: White Timeout";
+            }
+        }
+        else if(team == 5) victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "Draw: Player Agreement";
         else victoryScreen.transform.GetChild(0).GetComponent<TMP_Text>().text = "Draw: Stalemate";
+    }
+    private bool checkDraw(int team)
+    {
+        List<ChessPiece> material = new List<ChessPiece>();
+        for(int x = 0; x < TILE_COUNT_X; x++)
+        {
+            for(int y = 0; y < TILE_COUNT_Y; y++)
+            {
+                if(chessPieces[x,y] != null)
+                {
+                    if(chessPieces[x,y].team == team && chessPieces[x,y].type != ChessPieceType.King)
+                    {
+                        material.Add(chessPieces[x,y]);
+                    }
+                }
+            }
+        }
+        if(material.Count > 2)
+        {
+            return false;
+        }
+        else if(material.Count == 2)
+        {
+            return check2Bishops(material);
+        }
+        else if(material.Count == 1)
+        {
+            return material[0].type == ChessPieceType.Bishop || material[0].type == ChessPieceType.Knight;
+        }
+        return false;
+    }
+    private bool check2Bishops(List<ChessPiece> material)
+    {
+        //returns true if there are two bishops on the same square from the enemy material, else false
+        int bishopCount = 0;
+        for(int i = 0; i < material.Count; i++)
+        {
+            if(material[i].type == ChessPieceType.Bishop)
+            {
+                bishopCount++;
+            }
+        }
+        if(bishopCount == 2)
+        {
+            //check if on the same square
+            return ((material[0].currentX + material[0].currentY) % 2) == ((material[1].currentX + material[1].currentY) % 2);
+        }
+        return false;
     }
 
     public void OnRematchButton()
@@ -321,6 +407,52 @@ public class ChessBoard : MonoBehaviour
         }
         
     }
+    public void OnResignButton()
+    {
+        if (localGame)
+        {
+            Checkmate(currentTeam == 0? 1 : 0);
+        }
+        else
+        {
+            NetResign resign = new NetResign();
+            resign.resigningTeam = currentTeam;
+            Client.Instance.SendToServer(resign);
+        }
+        
+    }
+    public void OnDrawButton()
+    {
+        Debug.Log("Draw Button Pressed, evaluating local game logic");
+        if (localGame)
+        {
+            Checkmate(5);
+        }
+        else
+        {
+            Debug.Log("Is multiplayer game, sending rematch request to server");
+            NetDraw dr = new NetDraw();
+            dr.teamID = currentTeam;
+            dr.wantDraw = 1;
+            Client.Instance.SendToServer(dr);
+            //Display Draw Request Sent
+            drawText.text = "Draw Request Sent";
+        }
+        
+    }
+    public void OnDenyButton()
+    {
+        if (!localGame)
+        {
+            NetDraw dr = new NetDraw();
+            dr.teamID = currentTeam;
+            dr.wantDraw = 0;
+            Client.Instance.SendToServer(dr);
+            drawText.text = "";
+            denyButton.gameObject.SetActive(false);
+            playerDraw[0] = playerDraw[1] = false;
+        }
+    }
     public void GameReset()
     {
         rematchButton.interactable = true;
@@ -333,6 +465,10 @@ public class ChessBoard : MonoBehaviour
         availableMoves.Clear();
         moveList.Clear();
         playerRematch[0] = playerRematch[1] = false;
+        playerDraw [0] = playerDraw[1] = false;
+
+        denyButton.gameObject.SetActive(false);
+        drawText.text = "";
 
         for(int x = 0; x < TILE_COUNT_X; x++)
         {
@@ -356,22 +492,27 @@ public class ChessBoard : MonoBehaviour
         PositionAllPieces();
 
         isWhiteTurn = true;
+        timer.ResetTimer(gameTime);
+        timer.gameIsRunning = true;
+        if (localGame)
+        {
+            currentTeam = 0;
+        }
+        gameDisplay.SetActive(true);
         Debug.Log("Current rematch button conditions on reset: " + rematchButton.interactable);
+        Debug.Log("Current White Turn Status: " + isWhiteTurn);
     }
     public void OnMenuButton()
     {
-        NetRematch rm = new NetRematch();
-        rm.teamID = currentTeam;
-        rm.wantRematch = 0;
-        Client.Instance.SendToServer(rm);
+        if(!localGame){
+            NetRematch rm = new NetRematch();
+            rm.teamID = currentTeam;
+            rm.wantRematch = 0;
+            Client.Instance.SendToServer(rm);
+        }
 
         GameReset();
         GameUI.Instance.OnLeaveFromGameMenu();
-
-        Invoke("ShutdownRelay", 1.0f);
-
-        playerCount = -1;
-        currentTeam = -1;
     }
 
     //Special Moves
@@ -724,6 +865,7 @@ public class ChessBoard : MonoBehaviour
         PositionSinglePiece(x,y);
 
         isWhiteTurn = !isWhiteTurn;
+        //Switch Timer
         if(localGame)
             currentTeam = (currentTeam == 0)? 1 : 0;
         moveList.Add(new Vector2Int[] {previousPosition, new Vector2Int(x,y)});
@@ -739,12 +881,13 @@ public class ChessBoard : MonoBehaviour
         switch (CheckmateReached())
         {
             default:
+                timer.ProcessMove(isWhiteTurn);
                 break;
             case 1:
                 Checkmate(cp.team);
                 break;
             case 2:
-                Checkmate(2);
+                Checkmate(4);
                 break;
         }
 
@@ -758,28 +901,38 @@ public class ChessBoard : MonoBehaviour
         NetUtility.S_WELCOME += OnWelcomeServer;
         NetUtility.S_MAKE_MOVE += OnMakeMoveServer;
         NetUtility.S_REMATCH += OnRematchServer;
+        NetUtility.S_DRAW += OnDrawServer;
+        NetUtility.S_RESIGN += OnResignServer;
 
         NetUtility.C_WELCOME += OnWelcomeClient;
         NetUtility.C_START_GAME += OnStartGameClient;
         NetUtility.C_MAKE_MOVE += OnMakeMoveClient;
         NetUtility.C_REMATCH += OnRematchClient;
+        NetUtility.C_DRAW += OnDrawClient;
+        NetUtility.C_RESIGN += OnResignClient;
         
 
         GameUI.Instance.SetLocalGame += OnSetLocalGame;
+        Timer.Instance.Timeout += OnTimeout;
     }
     private void UnRegisterEvent()
     {
         NetUtility.S_WELCOME -= OnWelcomeServer;
         NetUtility.S_MAKE_MOVE -= OnMakeMoveServer;
         NetUtility.S_REMATCH -= OnRematchServer;
+        NetUtility.S_DRAW -= OnDrawServer;
+        NetUtility.S_RESIGN -= OnResignServer;
 
         NetUtility.C_WELCOME -= OnWelcomeClient;
         NetUtility.C_START_GAME -= OnStartGameClient;
         NetUtility.C_MAKE_MOVE -= OnMakeMoveClient;
         NetUtility.C_REMATCH -= OnRematchClient;
+        NetUtility.C_DRAW -= OnDrawClient;
+        NetUtility.C_RESIGN -= OnResignClient;
         
 
         GameUI.Instance.SetLocalGame -= OnSetLocalGame;
+        Timer.Instance.Timeout -= OnTimeout;
     }
 
     //Server
@@ -810,10 +963,18 @@ public class ChessBoard : MonoBehaviour
     {
         
         Debug.Log("Message to Rematch Received from Client, broadcasting now. PlayerCount: " + playerCount);
-        if(playerCount == 1)
+        if(playerCount == 1 || localGame)
         {
             Server.Instance.Broadcast(msg);
         }
+    }
+    private void OnDrawServer(NetMessage msg, NetworkConnection con)
+    {
+        Server.Instance.Broadcast(msg);
+    }
+    private void OnResignServer(NetMessage msg, NetworkConnection con)
+    {
+        Server.Instance.Broadcast(msg);
     }
 
 
@@ -829,10 +990,14 @@ public class ChessBoard : MonoBehaviour
         {
             Server.Instance.Broadcast(new NetStartGame());
         }
+        
     }
     private void OnStartGameClient(NetMessage obj)
     {
         GameUI.Instance.ChangeCamera((currentTeam==0)? CamerAngle.white : CamerAngle.black);
+        timer.ResetTimer(gameTime);
+        timer.gameIsRunning = true;
+        timer.localTeam = currentTeam;
     }
     private void OnMakeMoveClient(NetMessage msg)
     {
@@ -866,9 +1031,47 @@ public class ChessBoard : MonoBehaviour
         } 
         if(playerRematch[0] && playerRematch[1])
         {
+            timer.ResetTimer(gameTime);
             GameReset();
         }
+        if(rm.teamID == currentTeam && rm.wantRematch == 0)
+        {
+            Invoke("ShutdownRelay", 1.0f);
 
+            playerCount = -1;
+            currentTeam = -1;
+        }
+
+    }
+    private void OnDrawClient(NetMessage msg)
+    {
+        NetDraw draw = msg as NetDraw;
+        playerDraw[draw.teamID] = draw.wantDraw == 1;
+        if(draw.teamID != currentTeam)
+        {
+            if(draw.wantDraw != 1)
+            {
+                playerDraw[0] = playerDraw[1] = false;
+                StartCoroutine(DisplayDeniedText());
+            }
+            else
+            {
+                //Display Opponent Has Requested a Draw
+                drawText.text = "Opponent Has Requested a Draw";
+                //show deny Draw button
+                denyButton.gameObject.SetActive(true);
+            }
+        }
+        if(playerDraw[0] && playerDraw[1])
+        {
+            Checkmate(5);
+        }
+    }
+    private void OnResignClient(NetMessage msg)
+    {
+        NetResign res = msg as NetResign;
+
+        Checkmate(res.resigningTeam == 0? 1 : 0);
     }
 
     private void OnSetLocalGame(bool v)
@@ -877,9 +1080,23 @@ public class ChessBoard : MonoBehaviour
         currentTeam = -1;
         localGame = v;
     }
+    private void OnTimeout(int i)
+    {
+        Checkmate(i);
+    }
     private void ShutdownRelay()
     {
         Client.Instance.Shutdown();
         Server.Instance.Shutdown();
+    }
+
+    //Time Sensitive operations
+    IEnumerator DisplayDeniedText()
+    {
+        Debug.Log("Relaying Denied Draw Request");
+        drawText.text = "Opponent Has Denied Request";
+        yield return new WaitForSeconds(5f);
+        drawText.text = "";
+        Debug.Log("Text has now returned to nothing");
     }
 }

@@ -29,7 +29,7 @@
       "DisplayName": "Writing 6097564273297756792.rsp",
       "ActionType": "WriteFile",
       "PayloadOffset": 83,
-      "PayloadLength": 7850,
+      "PayloadLength": 10604,
       "PayloadDebugContentSnippet": "-a=\"C:\\Users\\az262\\Github\\Ches",
       "Inputs": [],
       "InputFlags": [],
@@ -71,6 +71,24 @@
         "Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Config.Runtime.dll",
         "Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll",
         "Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll",
+        "Library/ScriptAssemblies/Unity.Services.Authentication.dll",
+        "Library/ScriptAssemblies/Unity.Services.Authentication.PlayerAccounts.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Analytics.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Components.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Configuration.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Device.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Environments.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Environments.Internal.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Internal.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Networking.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Registration.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Scheduler.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Telemetry.dll",
+        "Library/ScriptAssemblies/Unity.Services.Core.Threading.dll",
+        "Library/ScriptAssemblies/Unity.Services.Multiplayer.dll",
+        "Library/ScriptAssemblies/Unity.Services.QoS.dll",
+        "Library/ScriptAssemblies/Unity.Services.Wire.Internal.dll",
         "Library/ScriptAssemblies/Unity.Splines.dll",
         "Library/ScriptAssemblies/Unity.TextMeshPro.dll",
         "Library/ScriptAssemblies/Unity.Timeline.dll",
@@ -81,6 +99,7 @@
         "Library/ScriptAssemblies/Unity.VisualScripting.State.dll",
         "Library/ScriptAssemblies/UnityEngine.TestRunner.dll",
         "Library/ScriptAssemblies/UnityEngine.UI.dll",
+        "Library/ScriptAssemblies/unity-websocket-sharp.dll",
         "Library/PackageCache/com.unity.burst@21aa83e7fd8f/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll",
         "Library/PackageCache/com.unity.burst@21aa83e7fd8f/Unity.Burst.CodeGen/Unity.Burst.Cecil.Mdb.dll",
         "Library/PackageCache/com.unity.burst@21aa83e7fd8f/Unity.Burst.CodeGen/Unity.Burst.Cecil.Pdb.dll",
@@ -94,10 +113,33 @@
         "Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Mdb.dll",
         "Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Pdb.dll",
         "Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Rocks.dll",
+        "Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64/Runtime/Newtonsoft.Json.dll",
+        "Library/PackageCache/com.unity.services.wire@9a73acde80cc/Plugins/websocket-sharp.dll",
         "Library/PackageCache/com.unity.visualscripting@191c0d7e3b69/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll",
         "Library/Bee/artifacts/rsp/6097564273297756792.rsp"
       ],
       "InputFlags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -338,10 +380,19 @@
       "File": "Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Rocks.dll"
     },
     {
+      "File": "Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64/Runtime/Newtonsoft.Json.dll"
+    },
+    {
+      "File": "Library/PackageCache/com.unity.services.wire@9a73acde80cc/Plugins/websocket-sharp.dll"
+    },
+    {
       "File": "Library/PackageCache/com.unity.visualscripting@191c0d7e3b69/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
     },
     {
       "File": "Library/ScriptAssemblies/Assembly-CSharp.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/unity-websocket-sharp.dll"
     },
     {
       "File": "Library/ScriptAssemblies/Unity.AI.Navigation.dll"
@@ -408,6 +459,60 @@
     },
     {
       "File": "Library/ScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Authentication.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Authentication.PlayerAccounts.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Analytics.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Components.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Configuration.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Device.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Environments.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Environments.Internal.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Internal.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Networking.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Registration.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Scheduler.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Telemetry.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Core.Threading.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Multiplayer.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.QoS.dll"
+    },
+    {
+      "File": "Library/ScriptAssemblies/Unity.Services.Wire.Internal.dll"
     },
     {
       "File": "Library/ScriptAssemblies/Unity.Splines.dll"

@@ -1,0 +1,35 @@
+{
+  "name": "com.unity.services.multiplayer",
+  "displayName": "Multiplayer Services",
+  "version": "2.1.1",
+  "unity": "2022.3",
+  "_upm": {
+    "gameService": {},
+    "changelog": "### Fixed\n- Fixed an issue where using an invalid `RelayProtocol` in `SessionOptions.WithNetworkOptions()` would try to connect with the wrong protocol."
+  },
+  "description": "The Multiplayer Services package is a one-stop solution for adding multiplayer elements to a game developed in Unity. The Unity Gaming Services (UGS) Multiplayer services powers these capabilities to define how groups of players interact in your games.",
+  "dependencies": {
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.services.authentication": "3.6.0",
+    "com.unity.services.core": "1.15.1",
+    "com.unity.services.qos": "1.3.0",
+    "com.unity.services.wire": "1.4.0",
+    "com.unity.transport": "2.5.0",
+    "com.unity.collections": "2.2.1",
+    "com.unity.services.deployment": "1.6.2"
+  },
+  "relatedPackages": {
+    "com.unity.services.multiplayer.tests": "2.1.1"
+  },
+  "upmCi": {
+    "footprint": "9056036cea7056d7737bf61d0991ba971a01e60b"
+  },
+  "documentationUrl": "https://docs.unity3d.com/Packages/com.unity.services.multiplayer@2.1/manual/index.html",
+  "repository": {
+    "url": "https://github.cds.internal.unity3d.com/unity/operate-services-sdk.git",
+    "type": "git",
+    "revision": "89811dbad355d62c72f74fe5af763435a0df3e3b"
+  },
+  "_fingerprint": "e8800dc862d19ebc5ac0d0953b8f27b55fc32172"
+}

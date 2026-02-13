@@ -1,7 +1,14 @@
 using UnityEngine;
-using Unity.Networking.Transport;
 using Unity.Collections;
 using System;
+using System.Threading.Tasks;
+
+using Unity.Services.Core;
+using Unity.Services.Authentication;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using Unity.Networking.Transport;
+using Unity.Networking.Transport.Relay;
 
 public class Server : MonoBehaviour
 {
@@ -40,6 +47,43 @@ public class Server : MonoBehaviour
 
         connections = new NativeList<NetworkConnection>(2, Allocator.Persistent);
         isActive = true;
+    }
+    public async Task<string> InitRelayHost(int maxConnections = 2)
+    {
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+        Allocation allocation =
+            await RelayService.Instance.CreateAllocationAsync(maxConnections);
+
+        string joinCode =
+            await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+
+        Debug.Log($"Relay Join Code: {joinCode}");
+
+        var relayData = AllocationUtils.ToRelayServerData(allocation, "dtls");
+        var settings = new NetworkSettings();
+        settings.WithRelayParameters(ref relayData);
+
+        driver = NetworkDriver.Create(settings);
+        var endpoint = NetworkEndpoint.AnyIpv4;
+        
+        if (driver.Bind(endpoint) != 0)
+        {
+            Debug.LogError("Failed to bind driver");
+            return null;
+        }
+
+        if (driver.Listen() != 0)
+        {
+            Debug.LogError("Failed to listen");
+            return null;
+        }
+
+        connections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
+        isActive = true;
+        return joinCode;
     }
 
     public void Shutdown()

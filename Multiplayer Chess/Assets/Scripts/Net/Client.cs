@@ -2,6 +2,12 @@ using UnityEngine;
 using Unity.Networking.Transport;
 using Unity.Collections;
 using System;
+using Unity.Services.Relay;
+using Unity.Services.Relay.Models;
+using Unity.Networking.Transport.Relay;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
+
 public class Client : MonoBehaviour
 {
     public static Client Instance {set; get;}
@@ -31,6 +37,26 @@ public class Client : MonoBehaviour
 
         RegisterToEvent();
          
+    }
+
+    public async void InitRelayClient(string joinCode)
+    {
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+        JoinAllocation joinAllocation =
+            await RelayService.Instance.JoinAllocationAsync(joinCode);
+
+        var relayData = AllocationUtils.ToRelayServerData(joinAllocation, "dtls");
+        var settings = new NetworkSettings();
+        settings.WithRelayParameters(ref relayData);
+
+        driver = NetworkDriver.Create(settings);
+        connection = driver.Connect(NetworkEndpoint.AnyIpv4);
+
+        isActive = true;
+        RegisterToEvent();
     }
 
     public void Shutdown()

@@ -35,6 +35,17 @@ Library\Bee\artifacts\mvdfrm\Unity.RenderPipelines.Universal.Shaders.ref.dll_946
 Library\Bee\artifacts\mvdfrm\Unity.Rendering.LightTransport.Editor.ref.dll_F96E2A343514CFAE.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.Rider.Editor.ref.dll_9B5591808ABA37AF.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.Searcher.Editor.ref.dll_12B7E1785E41BE0E.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Authentication.Editor.Shared.ref.dll_851AD2D833C89768.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Authentication.PlayerAccounts.ref.dll_FE92F4FC03A12DAB.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Authentication.ref.dll_AA487F5786203DE0.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Core.Analytics.ref.dll_EDA1682A714EA6BF.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Core.Components.ref.dll_066D80BB5B7F72E3.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Core.Environments.ref.dll_7E0AC2CDE81D9C6D.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Core.ref.dll_131AC9C5EC6E6517.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Multiplayer.Editor.Matchmaker.Authoring.ref.dll_D2343BB119AC6563.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Multiplayer.Editor.Shared.ref.dll_8FB16A737F273830.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.Multiplayer.ref.dll_13E2AECA5CD67FA8.mvfrm
+Library\Bee\artifacts\mvdfrm\Unity.Services.QoS.ref.dll_7A6B4C964C0CAC83.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.Settings.Editor.ref.dll_7F5B154C05A780B0.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.ShaderGraph.Editor.ref.dll_0F50152946DB09D0.mvfrm
 Library\Bee\artifacts\mvdfrm\Unity.Splines.Editor.ref.dll_FBEF939465B2E7A7.mvfrm

@@ -10,6 +10,7 @@
 		<type fullname="Queen" preserve="nothing"/>
 		<type fullname="Rook" preserve="nothing"/>
 		<type fullname="Server" preserve="nothing"/>
+		<type fullname="Timer" preserve="nothing"/>
 	</assembly>
 	<assembly fullname="Unity.Cinemachine">
 		<type fullname="Unity.Cinemachine.CinemachineBrain" preserve="nothing"/>

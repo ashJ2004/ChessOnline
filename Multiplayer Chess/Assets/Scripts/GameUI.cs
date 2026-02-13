@@ -1,6 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System;
+using System.Threading.Tasks;
 using TMPro;
+
+
 
 public enum CamerAngle
 {
@@ -19,6 +23,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Animator menuAnimator;
     [SerializeField] private TMP_InputField addressInput;
     [SerializeField] private GameObject[] cameraAngles;
+    [SerializeField] private TMP_Text joinText;
+    [SerializeField] private Button hostButton;
 
     public Action<bool> SetLocalGame;
 
@@ -41,25 +47,29 @@ public class GameUI : MonoBehaviour
     public void OnLocalGameButton()
     {
         SetLocalGame?.Invoke(true);
-        server.Init(8010);
-        client.Init("127.0.0.1", 8010);
+        server.Init(8007);
+        client.Init("127.0.0.1", 8007);
         menuAnimator.SetTrigger("GameMenu");
+        //set timer active
     }
     public void OnOnlineGameButton()
     {
          menuAnimator.SetTrigger("OnlineMenu");
     }
-    public void OnOnlineHostButton()
+    public async void OnOnlineHostButton()
     {
+        hostButton.interactable = false;
         SetLocalGame?.Invoke(false);
-        server.Init(8010);
-        client.Init("127.0.0.1", 8010);
+        string joinCode = await server.InitRelayHost();
+        client.InitRelayClient(joinCode);
+        joinText.text = joinCode;
         menuAnimator.SetTrigger("HostMenu");
+        hostButton.interactable = true;
     }
     public void OnOnlineConnectButton()
     {
         SetLocalGame?.Invoke(false);
-        client.Init(addressInput.text, 8010);
+        client.InitRelayClient(addressInput.text);
         menuAnimator.SetTrigger("GameMenu");
     }
     public void OnOnlineBackButton()
@@ -94,5 +104,6 @@ public class GameUI : MonoBehaviour
     private void OnStartGameClient(NetMessage obj)
     {
         menuAnimator.SetTrigger("GameMenu");
+        //set timer active
     }
 }
