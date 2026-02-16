@@ -23,6 +23,7 @@ public class Client : MonoBehaviour
     private bool isActive = false;
 
     private Action connectionDropped;
+    public Action connectionFailed;
 
     public void Init(string ip, ushort port)
     {
@@ -41,22 +42,30 @@ public class Client : MonoBehaviour
 
     public async void InitRelayClient(string joinCode)
     {
-        await UnityServices.InitializeAsync();
-        if (!AuthenticationService.Instance.IsSignedIn)
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        try
+        {
+            await UnityServices.InitializeAsync();
+            if (!AuthenticationService.Instance.IsSignedIn)
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
-        JoinAllocation joinAllocation =
-            await RelayService.Instance.JoinAllocationAsync(joinCode);
+            JoinAllocation joinAllocation =
+                await RelayService.Instance.JoinAllocationAsync(joinCode);
 
-        var relayData = AllocationUtils.ToRelayServerData(joinAllocation, "dtls");
-        var settings = new NetworkSettings();
-        settings.WithRelayParameters(ref relayData);
+            var relayData = AllocationUtils.ToRelayServerData(joinAllocation, "dtls");
+            var settings = new NetworkSettings();
+            settings.WithRelayParameters(ref relayData);
 
-        driver = NetworkDriver.Create(settings);
-        connection = driver.Connect(NetworkEndpoint.AnyIpv4);
+            driver = NetworkDriver.Create(settings);
+            connection = driver.Connect(NetworkEndpoint.AnyIpv4);
 
-        isActive = true;
-        RegisterToEvent();
+            isActive = true;
+            RegisterToEvent();
+        }
+        catch(Exception e)
+        {
+            connectionFailed?.Invoke();
+        }
+        
     }
 
     public void Shutdown()

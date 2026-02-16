@@ -6,8 +6,8 @@ using System;
 public class Timer : MonoBehaviour
 {
     public static Timer Instance {set; get;}
-    private int white = 1;
-    private int black = 1;
+    private float white = 1f;
+    private float black = 1f;
     int team;
     public bool gameIsRunning = true;
 
@@ -56,7 +56,7 @@ public class Timer : MonoBehaviour
         }
         
     }
-    public void ResetTimer(int time)
+    public void ResetTimer(float time)
     {
         team = -1;
         white = time;
@@ -71,10 +71,11 @@ public class Timer : MonoBehaviour
     {
         while(team == 0 && gameIsRunning)
         {
-            white--;
-            yield return new WaitForSeconds(1f);
+            white-=0.01f;
+            yield return new WaitForSeconds(0.01f);
+            
             UpdateText(player, white);
-            if(white == 0)
+            if(white <= 0)
             {
                 //Signify checkmate scenario
                 Timeout?.Invoke(3);
@@ -89,10 +90,10 @@ public class Timer : MonoBehaviour
     {
         while(team == 1 && gameIsRunning)
         {
-            black--;
-            yield return new WaitForSeconds(1f);
+            black-= 0.01f;
+            yield return new WaitForSeconds(0.01f);
             UpdateText(player, black);
-            if(black == 0)
+            if(black <= 0)
             {
                 //Signify checkmate scenario
                 Timeout?.Invoke(2);
@@ -103,9 +104,13 @@ public class Timer : MonoBehaviour
         }
         Debug.Log("Team Change detected, exiting timer for black team");
     }
-    private void UpdateText(TMP_Text text, int time)
+    private void UpdateText(TMP_Text text, float time)
     {
-        text.text = Mathf.FloorToInt(time/60) + ":" + (time%60 < 10? "0" + time%60 : time%60);
+        int minutes = Mathf.FloorToInt(time / 60);
+        int seconds = Mathf.FloorToInt(time % 60);
+        int hundredths = Mathf.FloorToInt((time - (float)Math.Floor(time)) * 100f); // hundredths of a second
+
+        text.text = string.Format("{0:D2}:{1:D2}:{2:D2}", minutes, seconds, hundredths);
     }
 
 

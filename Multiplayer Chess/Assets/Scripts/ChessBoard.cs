@@ -31,6 +31,7 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private TMP_Text drawText;
     [SerializeField] private Button denyButton;
     [SerializeField] private GameObject gameDisplay;
+    [SerializeField] private GameObject resignDisplay;
 
     [Header("Prefabs & Materials")]
     [SerializeField] private GameObject[] prefabs;
@@ -168,6 +169,27 @@ public class ChessBoard : MonoBehaviour
 
         }
     }
+    private bool OnWantsToQuit()
+    {
+        if (localGame)
+        {
+            ShutdownRelay();
+            return true;
+        }
+        else if (currentTeam > -1)
+        {
+            resignDisplay.SetActive(true);
+            //Wait for X seconds if player truly wants to leave
+            //If Player accepts new button that pops up, they Send the Disconnect Message and resign the game
+            //THIS IS REQUIRED FOR A RELEASE, ELSE CLIENTS WILL BE STUCK IN THE GAME AND WILL HAVE TO USE TASK MANAGER TO LEAVE IF A PLAYER DISCONNECTS
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
 
     private void GenerateGrid(float tileSize, int tileCountX,int tileCountY){
         yOffset += transform.position.y;
@@ -513,6 +535,14 @@ public class ChessBoard : MonoBehaviour
 
         GameReset();
         GameUI.Instance.OnLeaveFromGameMenu();
+        if (localGame)
+        {
+            ShutdownRelay();
+        }
+    }
+    public void OnBackButton()
+    {
+        resignDisplay.SetActive(false);
     }
 
     //Special Moves
@@ -910,10 +940,13 @@ public class ChessBoard : MonoBehaviour
         NetUtility.C_REMATCH += OnRematchClient;
         NetUtility.C_DRAW += OnDrawClient;
         NetUtility.C_RESIGN += OnResignClient;
+
+        //Client.Instance.connectionDropped += OnLoseConnection;
         
 
         GameUI.Instance.SetLocalGame += OnSetLocalGame;
         Timer.Instance.Timeout += OnTimeout;
+        Application.wantsToQuit += OnWantsToQuit;
     }
     private void UnRegisterEvent()
     {
@@ -929,10 +962,10 @@ public class ChessBoard : MonoBehaviour
         NetUtility.C_REMATCH -= OnRematchClient;
         NetUtility.C_DRAW -= OnDrawClient;
         NetUtility.C_RESIGN -= OnResignClient;
-        
 
         GameUI.Instance.SetLocalGame -= OnSetLocalGame;
         Timer.Instance.Timeout -= OnTimeout;
+        Application.wantsToQuit -= OnWantsToQuit;
     }
 
     //Server
@@ -1032,6 +1065,11 @@ public class ChessBoard : MonoBehaviour
         if(playerRematch[0] && playerRematch[1])
         {
             timer.ResetTimer(gameTime);
+            if(!localGame){
+                currentTeam = currentTeam == 0? 1:0;
+                GameUI.Instance.ChangeCamera((CamerAngle)currentTeam + 1);
+                timer.localTeam = currentTeam;
+            }
             GameReset();
         }
         if(rm.teamID == currentTeam && rm.wantRematch == 0)
@@ -1086,6 +1124,7 @@ public class ChessBoard : MonoBehaviour
     }
     private void ShutdownRelay()
     {
+        Debug.Log("SERVER SHUTDOWN INITIATED");
         Client.Instance.Shutdown();
         Server.Instance.Shutdown();
     }

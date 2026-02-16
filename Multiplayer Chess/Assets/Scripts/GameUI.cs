@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
 using System.Threading.Tasks;
+using System.Linq;
 using TMPro;
 
 
@@ -25,7 +27,7 @@ public class GameUI : MonoBehaviour
     [SerializeField] private GameObject[] cameraAngles;
     [SerializeField] private TMP_Text joinText;
     [SerializeField] private Button hostButton;
-
+    [SerializeField] private TMP_Text invalidCodeText;
     public Action<bool> SetLocalGame;
 
     private void Awake()
@@ -47,8 +49,8 @@ public class GameUI : MonoBehaviour
     public void OnLocalGameButton()
     {
         SetLocalGame?.Invoke(true);
-        server.Init(8007);
-        client.Init("127.0.0.1", 8007);
+        server.Init(8003);
+        client.Init("127.0.0.1", 8003);
         menuAnimator.SetTrigger("GameMenu");
         //set timer active
     }
@@ -69,7 +71,7 @@ public class GameUI : MonoBehaviour
     public void OnOnlineConnectButton()
     {
         SetLocalGame?.Invoke(false);
-        client.InitRelayClient(addressInput.text);
+        client.InitRelayClient(addressInput.text.ToUpper());
         menuAnimator.SetTrigger("GameMenu");
     }
     public void OnOnlineBackButton()
@@ -85,6 +87,7 @@ public class GameUI : MonoBehaviour
     }
     public void OnLeaveFromGameMenu()
     {
+        addressInput.text = "";
         ChangeCamera(CamerAngle.menu);
         menuAnimator.SetTrigger("StartMenu");
     }
@@ -92,18 +95,37 @@ public class GameUI : MonoBehaviour
     {
         Application.Quit();
     }
+    private void OnConnectionFail()
+    {
+        menuAnimator.SetTrigger("OnlineMenu");
+        StartCoroutine(DisplayInvalidCode());
+
+    }
 
     private void RegisterEvents()
     {
         NetUtility.C_START_GAME += OnStartGameClient;
+
+        client.connectionFailed += OnConnectionFail;
     }
     private void UnRegisterEvent()
     {
         NetUtility.C_START_GAME -= OnStartGameClient;
+
+        client.connectionFailed -= OnConnectionFail;
     }
     private void OnStartGameClient(NetMessage obj)
     {
         menuAnimator.SetTrigger("GameMenu");
         //set timer active
     }
+    IEnumerator DisplayInvalidCode()
+    {
+        invalidCodeText.gameObject.SetActive(true);
+        invalidCodeText.text = "Join Code \""+ addressInput.text.ToUpper() + "\" does not exist in current available session, try to join from lobby menu or try a different join code";
+        
+        yield return new WaitForSeconds(5f);
+        invalidCodeText.gameObject.SetActive(false);
+    }
+    
 }
