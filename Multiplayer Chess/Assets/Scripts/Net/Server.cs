@@ -1,12 +1,15 @@
 using UnityEngine;
 using Unity.Collections;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Unity.Services.Core;
 using Unity.Services.Authentication;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
 
@@ -24,6 +27,7 @@ public class Server : MonoBehaviour
     private bool isActive = false;
     private const float keepAliveTickRate = 20f;
     private float lastKeepAlive;
+    public string lobbyID;
 
     private Action connectionDropped;
 
@@ -63,6 +67,26 @@ public class Server : MonoBehaviour
         Debug.Log($"Relay Join Code: {joinCode}");
 
         var relayData = AllocationUtils.ToRelayServerData(allocation, "dtls");
+
+        try
+        {
+            var createLobbyOptions = new CreateLobbyOptions();
+            createLobbyOptions.IsPrivate = false;
+            createLobbyOptions.Data = new Dictionary<string, DataObject>()
+            {
+                {
+                    "JoinCode", new DataObject(visibility: DataObject.VisibilityOptions.Member, value: joinCode)
+                }
+            };
+            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("My Lobby", maxConnections, createLobbyOptions);
+            lobbyID = lobby.Id;
+            StartCoroutine(HeartbeatLobbyCoroutine(15f));
+        }
+        catch(LobbyServiceException e)
+        {
+            Debug.Log(e);
+            throw;
+        }
         var settings = new NetworkSettings();
         settings.WithRelayParameters(ref relayData);
 
@@ -84,6 +108,16 @@ public class Server : MonoBehaviour
         connections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
         isActive = true;
         return joinCode;
+    }
+
+    private System.Collections.IEnumerator HeartbeatLobbyCoroutine(float waitTimeSeconds)
+    {
+        var delay = new WaitForSeconds(waitTimeSeconds);
+        while (true)
+        {
+            LobbyService.Instance.SendHeartbeatPingAsync(lobbyID);
+            yield return delay;
+        }
     }
 
     public void Shutdown()

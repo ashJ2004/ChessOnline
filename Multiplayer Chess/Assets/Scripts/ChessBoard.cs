@@ -7,6 +7,9 @@ using System.Collections;
 using TMPro;
 using Unity.Networking.Transport;
 
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+
 public enum SpecialMove
 {
     None = 0,
@@ -1122,11 +1125,23 @@ public class ChessBoard : MonoBehaviour
     {
         Checkmate(i);
     }
-    private void ShutdownRelay()
+    private async void ShutdownRelay()
     {
         Debug.Log("SERVER SHUTDOWN INITIATED");
         Client.Instance.Shutdown();
         Server.Instance.Shutdown();
+
+        if (!string.IsNullOrEmpty(Server.Instance.lobbyID))
+        {
+            try
+            {
+                await LobbyService.Instance.DeleteLobbyAsync(Server.Instance.lobbyID);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
     }
 
     //Time Sensitive operations

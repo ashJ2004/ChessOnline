@@ -6,6 +6,8 @@
 		<type fullname="GameUI" preserve="nothing"/>
 		<type fullname="King" preserve="nothing"/>
 		<type fullname="Knight" preserve="nothing"/>
+		<type fullname="LobbyItem" preserve="nothing"/>
+		<type fullname="LobbyLists" preserve="nothing"/>
 		<type fullname="Pawn" preserve="nothing"/>
 		<type fullname="Queen" preserve="nothing"/>
 		<type fullname="Rook" preserve="nothing"/>

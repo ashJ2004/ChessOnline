@@ -7,6 +7,8 @@ ScriptsOnlyBuild:
     - GameUI
     - King
     - Knight
+    - LobbyItem
+    - LobbyLists
     - Pawn
     - Queen
     - Rook
@@ -137,10 +139,14 @@ ScriptsOnlyBuild:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
+    - UnityEngine.UI.ContentSizeFitter
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.LayoutElement
+    - UnityEngine.UI.Mask
     - UnityEngine.UI.RectMask2D
+    - UnityEngine.UI.ScrollRect
+    - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.VerticalLayoutGroup
   serializedClasses:
     Unity.Cinemachine:
@@ -279,6 +285,9 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Toggle/ToggleEvent
   methodsToPreserve:
   - assembly: Assembly-CSharp
+    fullTypeName: LobbyItem
+    methodName: OnJoinButton
+  - assembly: Assembly-CSharp
     fullTypeName: GameUI
     methodName: OnHostBackButton
   - assembly: Assembly-CSharp
@@ -302,12 +311,18 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: ChessBoard
     methodName: OnMenuButton
+  - assembly: UnityEngine.CoreModule
+    fullTypeName: UnityEngine.GameObject
+    methodName: SetActive
   - assembly: Assembly-CSharp
     fullTypeName: GameUI
     methodName: OnOnlineBackButton
   - assembly: Assembly-CSharp
     fullTypeName: ChessBoard
     methodName: OnBackButton
+  - assembly: UnityEngine.CoreModule
+    fullTypeName: UnityEngine.GameObject
+    methodName: SetActive
   - assembly: Assembly-CSharp
     fullTypeName: GameUI
     methodName: OnOnlineGameButton
@@ -323,6 +338,9 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: ChessBoard
     methodName: OnMenuButton
+  - assembly: Assembly-CSharp
+    fullTypeName: LobbyLists
+    methodName: RefreshList
   - assembly: Unity.RenderPipelines.Core.Runtime
     fullTypeName: UnityEngine.Rendering.UI.DebugUIHandlerButton
     methodName: OnAction
@@ -413,6 +431,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 52380}
     - Class: 114
       Script: {instanceID: 45444}
+    - Class: 114
+      Script: {instanceID: 55788}
+    - Class: 114
+      Script: {instanceID: 55664}
     - Class: 114
       Script: {instanceID: 49254}
     - Class: 114
@@ -1642,7 +1664,7 @@ ScriptsOnlyBuild:
     className: VolumeComponent
   - hash:
       serializedVersion: 2
-      Hash: 89ebeddab55ef13c7bcadaad5bde214c
+      Hash: a69405fc4b96dda5b0bc22b2e20c07bc
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: Server
@@ -2074,7 +2096,7 @@ ScriptsOnlyBuild:
     className: CinemachineShot
   - hash:
       serializedVersion: 2
-      Hash: 8191b7ef758c86c9b2889596f39ccd4d
+      Hash: 65d0ac433874be743122db4b2a01d700
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameUI
@@ -2678,6 +2700,18 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Splines
     namespaceName: UnityEngine.Splines
     className: SplineExtrude
+  - hash:
+      serializedVersion: 2
+      Hash: 1f21b6328d275ba17838c0a14e97118f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: LobbyLists
+  - hash:
+      serializedVersion: 2
+      Hash: 567e60b464fe6039330203387220bceb
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: LobbyItem
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity

@@ -19,6 +19,12 @@
 			<method name="OnOnlineHostButton"/>
 			<method name="OnQuitButton"/>
 		</type>
+		<type fullname="LobbyItem">
+			<method name="OnJoinButton"/>
+		</type>
+		<type fullname="LobbyLists">
+			<method name="RefreshList"/>
+		</type>
 	</assembly>
 	<assembly fullname="Unity.RenderPipelines.Core.Runtime" ignoreIfMissing="1">
 		<type fullname="UnityEngine.Rendering.UI.DebugUIHandlerButton">
@@ -44,6 +50,12 @@
 			<method name="OnDecrement"/>
 			<method name="OnIncrement"/>
 			<method name="OnIncrement"/>
+		</type>
+	</assembly>
+	<assembly fullname="UnityEngine.CoreModule" ignoreIfMissing="1">
+		<type fullname="UnityEngine.GameObject">
+			<method name="SetActive"/>
+			<method name="SetActive"/>
 		</type>
 	</assembly>
 </linker>

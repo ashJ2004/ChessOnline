@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Networking.Transport;
 using Unity.Collections;
 using System;
+using System.Threading.Tasks;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using Unity.Networking.Transport.Relay;
@@ -40,8 +41,9 @@ public class Client : MonoBehaviour
          
     }
 
-    public async void InitRelayClient(string joinCode)
+    public async Task InitRelayClient(string joinCode)
     {
+
         try
         {
             await UnityServices.InitializeAsync();

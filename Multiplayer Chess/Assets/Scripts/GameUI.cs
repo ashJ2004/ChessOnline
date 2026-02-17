@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using TMPro;
 
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+
 
 
 public enum CamerAngle
@@ -57,21 +60,25 @@ public class GameUI : MonoBehaviour
     public void OnOnlineGameButton()
     {
          menuAnimator.SetTrigger("OnlineMenu");
+         SetLocalGame?.Invoke(false);
     }
     public async void OnOnlineHostButton()
     {
         hostButton.interactable = false;
-        SetLocalGame?.Invoke(false);
         string joinCode = await server.InitRelayHost();
-        client.InitRelayClient(joinCode);
+        await client.InitRelayClient(joinCode);
         joinText.text = joinCode;
         menuAnimator.SetTrigger("HostMenu");
         hostButton.interactable = true;
     }
-    public void OnOnlineConnectButton()
+    public async Task OnOnlineConnectButton()
     {
         SetLocalGame?.Invoke(false);
-        client.InitRelayClient(addressInput.text.ToUpper());
+        if(addressInput.text == ""){
+            OnConnectionFail();
+            return;
+        }
+        await client.InitRelayClient(addressInput.text.ToUpper());
         menuAnimator.SetTrigger("GameMenu");
     }
     public void OnOnlineBackButton()
@@ -83,7 +90,26 @@ public class GameUI : MonoBehaviour
     {
         server.Shutdown();
         client.Shutdown();
+
+        DeleteLobby();
+
         menuAnimator.SetTrigger("OnlineMenu");
+
+
+    }
+    private async void DeleteLobby()
+    {
+        if (!string.IsNullOrEmpty(server.lobbyID))
+        {
+            try
+            {
+                await LobbyService.Instance.DeleteLobbyAsync(server.lobbyID);
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
     }
     public void OnLeaveFromGameMenu()
     {
