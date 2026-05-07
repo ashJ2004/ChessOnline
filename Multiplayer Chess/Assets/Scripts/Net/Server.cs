@@ -52,7 +52,7 @@ public class Server : MonoBehaviour
         connections = new NativeList<NetworkConnection>(2, Allocator.Persistent);
         isActive = true;
     }
-    public async Task<string> InitRelayHost(int maxConnections = 2)
+    public async Task<string> InitRelayHost(int maxConnections = 2, int timeControl = 3, string lobbyName = "My Lobby", int joiningTeam = 1)
     {
         await UnityServices.InitializeAsync();
         if (!AuthenticationService.Instance.IsSignedIn)
@@ -76,9 +76,17 @@ public class Server : MonoBehaviour
             {
                 {
                     "JoinCode", new DataObject(visibility: DataObject.VisibilityOptions.Member, value: joinCode)
+                },
+                {
+                    "TimeControl",
+                    new DataObject(DataObject.VisibilityOptions.Public, timeControl.ToString())
+                },
+                {
+                    "JoiningTeam",
+                    new DataObject(DataObject.VisibilityOptions.Public, joiningTeam.ToString())
                 }
             };
-            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync("My Lobby", maxConnections, createLobbyOptions);
+            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxConnections, createLobbyOptions);
             lobbyID = lobby.Id;
             StartCoroutine(HeartbeatLobbyCoroutine(15f));
         }
@@ -122,12 +130,20 @@ public class Server : MonoBehaviour
 
     public void Shutdown()
     {
-        if (isActive)
+        
+        if (!isActive) return;
+
+        // Disconnect all clients
+        for (int i = 0; i < connections.Length; i++)
         {
-            driver.Dispose();
-            connections.Dispose();
-            isActive = false;
+            if (connections[i].IsCreated)
+                connections[i].Disconnect(driver);
         }
+
+        // Dispose server driver and connections
+        driver.Dispose();
+        connections.Dispose();
+        isActive = false;
     }
 
     public void OnDestroy()

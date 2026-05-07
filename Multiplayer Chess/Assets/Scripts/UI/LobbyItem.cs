@@ -26,7 +26,7 @@ public class LobbyItem : MonoBehaviour
 
     public void OnJoinButton()
     {
-        GameUI.Instance.gameObject.transform.GetChild(7).gameObject.SetActive(false);
+        GameUI.Instance.gameObject.transform.GetChild(8).gameObject.SetActive(false);
         lobbiesList.JoinAsync(lobby);
     }
     

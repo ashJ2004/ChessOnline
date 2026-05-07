@@ -19,12 +19,15 @@ public class Client : MonoBehaviour
     }
 
     public NetworkDriver driver;
+    public int gameTime;
+    public int otherTeam;
     private NetworkConnection connection;
 
     private bool isActive = false;
 
     private Action connectionDropped;
     public Action connectionFailed;
+
 
     public void Init(string ip, ushort port)
     {
@@ -34,14 +37,17 @@ public class Client : MonoBehaviour
         connection = driver.Connect(endpoint);
 
         Debug.Log("Attempting to connect to server on " + endpoint.Address);
+        
+        gameTime = 600;
 
         isActive = true;
+
 
         RegisterToEvent();
          
     }
 
-    public async Task InitRelayClient(string joinCode)
+    public async Task InitRelayClient(string joinCode, int timeValue = 3, int team = 1)
     {
 
         try
@@ -60,6 +66,32 @@ public class Client : MonoBehaviour
             driver = NetworkDriver.Create(settings);
             connection = driver.Connect(NetworkEndpoint.AnyIpv4);
 
+            switch (timeValue)
+            {
+                case 0:
+                    gameTime = 60;
+                    break;
+                case 1:
+                    gameTime = 180;
+                    break;
+                case 2:
+                    gameTime = 300;
+                    break;
+                case 3:
+                    gameTime = 600;
+                    break;
+                case 4:
+                    gameTime = 1800;
+                    break;
+                case 5:
+                    gameTime = 3600;
+                    break;
+                default:
+                    gameTime = 600;
+                    break;
+            }
+            otherTeam = team;
+
             isActive = true;
             RegisterToEvent();
         }
@@ -72,13 +104,16 @@ public class Client : MonoBehaviour
 
     public void Shutdown()
     {
-        if (isActive)
-        {
-            UnRegistertoEvent();
-            driver.Dispose();
-            isActive = false;
-            connection = default(NetworkConnection);
-        }
+        if (!isActive) return;
+
+        UnRegistertoEvent();
+
+        if (connection.IsCreated)
+            connection.Disconnect(driver);
+
+        driver.Dispose();
+        connection = default(NetworkConnection);
+        isActive = false;
     }
 
     public void OnDestroy()

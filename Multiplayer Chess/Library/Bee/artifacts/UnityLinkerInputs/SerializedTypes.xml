@@ -1,4 +1,8 @@
 <linker>
+	<assembly fullname="Assembly-CSharp">
+		<type fullname="GameUI/GameObjectArray" preserve="nothing" serialized="true"/>
+		<type fullname="GameUI/MaterialArray" preserve="nothing" serialized="true"/>
+	</assembly>
 	<assembly fullname="Unity.Cinemachine">
 		<type fullname="Unity.Cinemachine.CameraTarget" preserve="nothing" serialized="true"/>
 		<type fullname="Unity.Cinemachine.CinemachineBlendDefinition" preserve="nothing" serialized="true"/>
@@ -95,6 +99,9 @@
 		<type fullname="TMPro.FontAssetCreationSettings" preserve="nothing" serialized="true"/>
 		<type fullname="TMPro.KerningTable" preserve="nothing" serialized="true"/>
 		<type fullname="TMPro.TMP_Character" preserve="nothing" serialized="true"/>
+		<type fullname="TMPro.TMP_Dropdown/DropdownEvent" preserve="nothing" serialized="true"/>
+		<type fullname="TMPro.TMP_Dropdown/OptionData" preserve="nothing" serialized="true"/>
+		<type fullname="TMPro.TMP_Dropdown/OptionDataList" preserve="nothing" serialized="true"/>
 		<type fullname="TMPro.TMP_FontFeatureTable" preserve="nothing" serialized="true"/>
 		<type fullname="TMPro.TMP_FontWeightPair" preserve="nothing" serialized="true"/>
 		<type fullname="TMPro.TMP_InputField/OnChangeEvent" preserve="nothing" serialized="true"/>

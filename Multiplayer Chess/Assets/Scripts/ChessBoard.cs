@@ -40,6 +40,8 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private GameObject[] prefabs;
     [SerializeField] private Material[] teamMaterials;
     [SerializeField] private int gameTime;
+    [SerializeField] private Transform movelist;
+    [SerializeField] private GameObject moveItem;
 
     private List<Vector2Int> availableMoves = new List<Vector2Int>();
     private ChessPiece[,] chessPieces;
@@ -56,12 +58,15 @@ public class ChessBoard : MonoBehaviour
     private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
     private SpecialMove specialMove;
     public Timer timer;
+    private GameObject lastMoveItem;
 
     private int playerCount = -1;
     private int currentTeam = -1;
     private bool localGame =true;
     private bool[] playerRematch = new bool[2];
     private bool[] playerDraw = new bool[2];
+
+
  
 
     public void Start(){
@@ -281,7 +286,7 @@ public class ChessBoard : MonoBehaviour
 
         return cp;
     }
-
+    
     //Positioning
 
     public void PositionAllPieces()
@@ -523,6 +528,10 @@ public class ChessBoard : MonoBehaviour
         {
             currentTeam = 0;
         }
+        for (int i = movelist.childCount - 1; i >= 1; i--)
+        {
+            Destroy(movelist.GetChild(i).gameObject);
+        }   
         gameDisplay.SetActive(true);
         Debug.Log("Current rematch button conditions on reset: " + rematchButton.interactable);
         Debug.Log("Current White Turn Status: " + isWhiteTurn);
@@ -904,6 +913,19 @@ public class ChessBoard : MonoBehaviour
         moveList.Add(new Vector2Int[] {previousPosition, new Vector2Int(x,y)});
         
         ProcessSpecialMove();
+
+        string notation = GenerateMoveNotation(cp, originalX, originalY, x, y);
+        //Update move list
+        if (isWhiteTurn)
+        {
+            lastMoveItem.transform.GetChild(1).gameObject.GetComponent<TMP_Text>().text = notation;
+        }
+        else
+        {
+            lastMoveItem = Instantiate(moveItem, movelist);
+            lastMoveItem.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = notation;
+        }
+
         if(currentlyDragging != null)
         {
             currentlyDragging = null;
@@ -927,6 +949,166 @@ public class ChessBoard : MonoBehaviour
 
         return;
     }
+    private string GenerateMoveNotation(ChessPiece piece, int fromX, int fromY, int toX, int toY)
+    {
+        string notation = "";
+
+        // CASTLING
+        if (specialMove == SpecialMove.Castling)
+        {
+            return (toX == 6) ? "O-O" : "O-O-O";
+        }
+
+        bool isCapture = false;
+
+        // Detect capture (including en passant)
+        if (specialMove == SpecialMove.EnPassant)
+            isCapture = true;
+        else if (moveList.Count > 0)
+        {
+            ChessPiece target = chessPieces[toX, toY];
+            if (target != null && target.team != piece.team)
+                isCapture = true;
+        }
+
+        // Piece letter
+        if (piece.type != ChessPieceType.Pawn)
+            notation += GetPieceLetter(piece.type);
+
+        // Disambiguation
+        if (piece.type != ChessPieceType.Pawn)
+            notation += GetDisambiguation(piece, fromX, fromY, toX, toY);
+
+        // Pawn capture needs file
+        if (piece.type == ChessPieceType.Pawn && isCapture)
+            notation += ConvertFile(fromX);
+
+        if (isCapture)
+            notation += "x";
+
+        notation += ConvertSquare(toX, toY);
+
+        // Promotion
+        if (specialMove == SpecialMove.Promotion)
+            notation += "=Q";
+
+        int mateState = CheckmateReached();
+        if (mateState == 1)
+            notation += "#";
+        else
+        {
+            // check only
+            int enemy = piece.team == 0 ? 1 : 0;
+            if (IsKingInCheck(enemy))
+                notation += "+";
+        }
+
+        return notation;
+    }
+    private string GetPieceLetter(ChessPieceType type)
+    {
+        switch (type)
+        {
+            case ChessPieceType.Knight: return "N";
+            case ChessPieceType.Bishop: return "B";
+            case ChessPieceType.Rook: return "R";
+            case ChessPieceType.Queen: return "Q";
+            case ChessPieceType.King: return "K";
+            default: return "";
+        }
+    }
+    private string GetDisambiguation(ChessPiece piece, int fromX, int fromY, int toX, int toY)
+    {
+        List<ChessPiece> samePieces = new List<ChessPiece>();
+
+        for (int x = 0; x < TILE_COUNT_X; x++)
+        {
+            for (int y = 0; y < TILE_COUNT_Y; y++)
+            {
+                ChessPiece p = chessPieces[x, y];
+                if (p != null &&
+                    p != piece &&
+                    p.team == piece.team &&
+                    p.type == piece.type)
+                {
+                    var moves = p.GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
+                    if (ContainsValidMove(ref moves, new Vector2(toX, toY)))
+                        samePieces.Add(p);
+                }
+            }
+        }
+
+        if (samePieces.Count == 0)
+            return "";
+
+        bool fileConflict = false;
+        bool rankConflict = false;
+
+        foreach (var p in samePieces)
+        {
+            if (p.currentX == fromX) fileConflict = true;
+            if (p.currentY == fromY) rankConflict = true;
+        }
+
+        if (!fileConflict)
+            return ConvertFile(fromX);
+
+        if (!rankConflict)
+            return ConvertRank(fromY);
+
+        return ConvertSquare(fromX, fromY);
+    }
+    private string ConvertSquare(int x, int y)
+    {
+        return ConvertFile(x) + ConvertRank(y);
+    }
+
+    private string ConvertFile(int x)
+    {
+        return ((char)('a' + x)).ToString();
+    }
+
+    private string ConvertRank(int y)
+    {
+        return ((char)('1' + y)).ToString();
+    }
+    private bool IsKingInCheck(int team)
+    {
+        ChessPiece king = null;
+
+        for (int x = 0; x < TILE_COUNT_X; x++)
+        {
+            for (int y = 0; y < TILE_COUNT_Y; y++)
+            {
+                if (chessPieces[x, y] != null &&
+                    chessPieces[x, y].team == team &&
+                    chessPieces[x, y].type == ChessPieceType.King)
+                {
+                    king = chessPieces[x, y];
+                    break;
+                }
+            }
+        }
+
+        if (king == null) return false;
+
+        List<Vector2Int> enemyMoves = new List<Vector2Int>();
+
+        for (int x = 0; x < TILE_COUNT_X; x++)
+        {
+            for (int y = 0; y < TILE_COUNT_Y; y++)
+            {
+                if (chessPieces[x, y] != null &&
+                    chessPieces[x, y].team != team)
+                {
+                    var moves = chessPieces[x, y].GetAvailableMoves(ref chessPieces, TILE_COUNT_X, TILE_COUNT_Y);
+                    enemyMoves.AddRange(moves);
+                }
+            }
+        }
+
+        return ContainsValidMove(ref enemyMoves, new Vector2(king.currentX, king.currentY));
+    }
 
     private void RegisterEvents()
     {
@@ -948,6 +1130,8 @@ public class ChessBoard : MonoBehaviour
         
 
         GameUI.Instance.SetLocalGame += OnSetLocalGame;
+        GameUI.Instance.prematureLobbyDeletion += OnLobbyDeletion;
+        GameUI.Instance.ApplySettings += ChangeCosmetics;
         Timer.Instance.Timeout += OnTimeout;
         Application.wantsToQuit += OnWantsToQuit;
     }
@@ -967,6 +1151,8 @@ public class ChessBoard : MonoBehaviour
         NetUtility.C_RESIGN -= OnResignClient;
 
         GameUI.Instance.SetLocalGame -= OnSetLocalGame;
+        GameUI.Instance.prematureLobbyDeletion -= OnLobbyDeletion;
+        GameUI.Instance.ApplySettings -= ChangeCosmetics;
         Timer.Instance.Timeout -= OnTimeout;
         Application.wantsToQuit -= OnWantsToQuit;
     }
@@ -975,8 +1161,23 @@ public class ChessBoard : MonoBehaviour
     private void OnWelcomeServer(NetMessage msg, NetworkConnection con)
     {
         NetWelcome nw = msg as NetWelcome;
-
-        nw.AssignedTeam = ++playerCount;
+        if (!localGame)
+        {
+           if(Client.Instance.otherTeam == 1)
+            {
+                nw.AssignedTeam = ++playerCount;
+            }
+            else
+            {
+                nw.AssignedTeam = (++playerCount == 0)? 1 : 0;
+            } 
+        }
+        else
+        {
+            nw.AssignedTeam = ++playerCount;
+        }
+        
+        
 
         Server.Instance.SendToClient(con, nw);
 
@@ -1031,6 +1232,7 @@ public class ChessBoard : MonoBehaviour
     private void OnStartGameClient(NetMessage obj)
     {
         GameUI.Instance.ChangeCamera((currentTeam==0)? CamerAngle.white : CamerAngle.black);
+        gameTime = Client.Instance.gameTime;
         timer.ResetTimer(gameTime);
         timer.gameIsRunning = true;
         timer.localTeam = currentTeam;
@@ -1121,6 +1323,14 @@ public class ChessBoard : MonoBehaviour
         currentTeam = -1;
         localGame = v;
     }
+    private void OnLobbyDeletion()
+    {
+        playerCount = -1;
+        currentTeam = -1;
+
+        ShutdownRelay();
+
+    }
     private void OnTimeout(int i)
     {
         Checkmate(i);
@@ -1142,6 +1352,26 @@ public class ChessBoard : MonoBehaviour
                 Debug.Log(e);
             }
         }
+    }
+    private void ChangeCosmetics(GameObject[] models, Material[] materials)
+    {
+        prefabs = models;
+        teamMaterials = materials;
+        //Destroy Current Pieces on board
+        for(int x = 0; x < TILE_COUNT_X; x++)
+        {
+            for(int y = 0; y < TILE_COUNT_Y; y++)
+            {
+                if(chessPieces[x,y] != null)
+                {
+                    Destroy(chessPieces[x,y].gameObject);
+                }
+                chessPieces[x,y] = null;
+            }
+        }
+        // respawn pieces with new skins
+        SpawnPieces();
+        PositionAllPieces();
     }
 
     //Time Sensitive operations

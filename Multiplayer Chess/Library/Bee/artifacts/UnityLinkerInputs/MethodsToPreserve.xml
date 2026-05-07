@@ -12,14 +12,23 @@
 		</type>
 		<type fullname="GameUI">
 			<method name="OnHostBackButton"/>
+			<method name="OnLobbyBackButton"/>
+			<method name="OnLobbyCreateButton"/>
 			<method name="OnLocalGameButton"/>
 			<method name="OnOnlineBackButton"/>
+			<method name="OnOnlineBackButton"/>
 			<method name="OnOnlineConnectButton"/>
+			<method name="OnOnlineCreateButton"/>
 			<method name="OnOnlineGameButton"/>
 			<method name="OnOnlineHostButton"/>
 			<method name="OnQuitButton"/>
+			<method name="OnSettingsApplyButton"/>
+			<method name="OnSettingsButton"/>
+			<method name="ShowApplyButton"/>
+			<method name="ShowApplyButton"/>
 		</type>
 		<type fullname="LobbyItem">
+			<method name="OnJoinButton"/>
 			<method name="OnJoinButton"/>
 		</type>
 		<type fullname="LobbyLists">

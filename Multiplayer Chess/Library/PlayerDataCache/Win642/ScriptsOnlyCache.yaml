@@ -62,6 +62,8 @@ ScriptsOnlyBuild:
     - UnityEngine.Rendering.ProbeVolumesOptions
     - UnityEngine.Rendering.Volume
     - UnityEngine.Rendering.VolumeProfile
+    Unity.RenderPipelines.Universal.2D.Editor.Overrides.dll:
+    - UnityEditor.Rendering.Universal.Renderer2DMeshEditor
     Unity.RenderPipelines.Universal.Editor.dll:
     - UnityEditor.Rendering.Universal.UniversalProjectSettings
     Unity.RenderPipelines.Universal.Runtime.dll:
@@ -101,6 +103,7 @@ ScriptsOnlyBuild:
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
     Unity.TextMeshPro.dll:
+    - TMPro.TMP_Dropdown
     - TMPro.TMP_FontAsset
     - TMPro.TMP_InputField
     - TMPro.TMP_Settings
@@ -147,8 +150,12 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.RectMask2D
     - UnityEngine.UI.ScrollRect
     - UnityEngine.UI.Scrollbar
+    - UnityEngine.UI.Toggle
     - UnityEngine.UI.VerticalLayoutGroup
   serializedClasses:
+    Assembly-CSharp:
+    - GameUI/GameObjectArray
+    - GameUI/MaterialArray
     Unity.Cinemachine:
     - Unity.Cinemachine.CameraTarget
     - Unity.Cinemachine.CinemachineBlendDefinition
@@ -240,6 +247,9 @@ ScriptsOnlyBuild:
     - TMPro.FontAssetCreationSettings
     - TMPro.KerningTable
     - TMPro.TMP_Character
+    - TMPro.TMP_Dropdown/DropdownEvent
+    - TMPro.TMP_Dropdown/OptionData
+    - TMPro.TMP_Dropdown/OptionDataList
     - TMPro.TMP_FontFeatureTable
     - TMPro.TMP_FontWeightPair
     - TMPro.TMP_InputField/OnChangeEvent
@@ -288,14 +298,23 @@ ScriptsOnlyBuild:
     fullTypeName: LobbyItem
     methodName: OnJoinButton
   - assembly: Assembly-CSharp
+    fullTypeName: LobbyItem
+    methodName: OnJoinButton
+  - assembly: Assembly-CSharp
     fullTypeName: GameUI
     methodName: OnHostBackButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: OnSettingsApplyButton
   - assembly: Assembly-CSharp
     fullTypeName: ChessBoard
     methodName: OnDenyButton
   - assembly: Assembly-CSharp
     fullTypeName: ChessBoard
     methodName: OnDrawButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: ShowApplyButton
   - assembly: Assembly-CSharp
     fullTypeName: GameUI
     methodName: OnOnlineConnectButton
@@ -305,6 +324,24 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: GameUI
     methodName: OnQuitButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: OnLobbyCreateButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: OnOnlineBackButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: ShowApplyButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: OnLobbyBackButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: OnOnlineCreateButton
+  - assembly: Assembly-CSharp
+    fullTypeName: GameUI
+    methodName: OnSettingsButton
   - assembly: Assembly-CSharp
     fullTypeName: ChessBoard
     methodName: OnResignButton
@@ -420,157 +457,159 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 50966}
+      Script: {instanceID: 50974}
     - Class: 114
-      Script: {instanceID: 43800}
+      Script: {instanceID: 43806}
     - Class: 114
-      Script: {instanceID: 41470}
+      Script: {instanceID: 41476}
     - Class: 114
-      Script: {instanceID: 47768}
+      Script: {instanceID: 47776}
     - Class: 114
-      Script: {instanceID: 52380}
+      Script: {instanceID: 52388}
     - Class: 114
-      Script: {instanceID: 45444}
+      Script: {instanceID: 45452}
     - Class: 114
-      Script: {instanceID: 55788}
+      Script: {instanceID: 44604}
     - Class: 114
-      Script: {instanceID: 55664}
+      Script: {instanceID: 36576}
     - Class: 114
-      Script: {instanceID: 49254}
+      Script: {instanceID: 49262}
     - Class: 114
-      Script: {instanceID: 39886}
+      Script: {instanceID: 39892}
     - Class: 114
-      Script: {instanceID: 42616}
+      Script: {instanceID: 42622}
     - Class: 114
-      Script: {instanceID: 44132}
+      Script: {instanceID: 44138}
     - Class: 114
-      Script: {instanceID: 51610}
+      Script: {instanceID: 50384}
     - Class: 114
-      Script: {instanceID: 38132}
+      Script: {instanceID: 51618}
     - Class: 114
-      Script: {instanceID: 37596}
+      Script: {instanceID: 38138}
     - Class: 114
-      Script: {instanceID: 43442}
+      Script: {instanceID: 37602}
     - Class: 114
-      Script: {instanceID: 50330}
+      Script: {instanceID: 43448}
     - Class: 114
-      Script: {instanceID: 36678}
+      Script: {instanceID: 50338}
     - Class: 114
-      Script: {instanceID: 43970}
+      Script: {instanceID: 36684}
     - Class: 114
-      Script: {instanceID: 43558}
+      Script: {instanceID: 43976}
     - Class: 114
-      Script: {instanceID: 38874}
+      Script: {instanceID: 43564}
     - Class: 114
-      Script: {instanceID: 38988}
+      Script: {instanceID: 38880}
     - Class: 114
-      Script: {instanceID: 40374}
+      Script: {instanceID: 38994}
     - Class: 114
-      Script: {instanceID: 50472}
+      Script: {instanceID: 40380}
     - Class: 114
-      Script: {instanceID: 41938}
+      Script: {instanceID: 50480}
     - Class: 114
-      Script: {instanceID: 37326}
+      Script: {instanceID: 41944}
     - Class: 114
-      Script: {instanceID: 49148}
+      Script: {instanceID: 37332}
     - Class: 114
-      Script: {instanceID: 47238}
+      Script: {instanceID: 49156}
     - Class: 114
-      Script: {instanceID: 43626}
+      Script: {instanceID: 47246}
     - Class: 114
-      Script: {instanceID: 40330}
+      Script: {instanceID: 43632}
     - Class: 114
-      Script: {instanceID: 50950}
+      Script: {instanceID: 40336}
     - Class: 114
-      Script: {instanceID: 43902}
+      Script: {instanceID: 50958}
     - Class: 114
-      Script: {instanceID: 40166}
+      Script: {instanceID: 43908}
     - Class: 114
-      Script: {instanceID: 43526}
+      Script: {instanceID: 40172}
     - Class: 114
-      Script: {instanceID: 43742}
+      Script: {instanceID: 43532}
     - Class: 114
-      Script: {instanceID: 37952}
+      Script: {instanceID: 43748}
     - Class: 114
-      Script: {instanceID: 40290}
+      Script: {instanceID: 37958}
     - Class: 114
-      Script: {instanceID: 38214}
+      Script: {instanceID: 40296}
     - Class: 114
-      Script: {instanceID: 49066}
+      Script: {instanceID: 38220}
     - Class: 114
-      Script: {instanceID: 39764}
+      Script: {instanceID: 49074}
     - Class: 114
-      Script: {instanceID: 36916}
+      Script: {instanceID: 39770}
     - Class: 114
-      Script: {instanceID: 42916}
+      Script: {instanceID: 36922}
     - Class: 114
-      Script: {instanceID: 37266}
+      Script: {instanceID: 42922}
     - Class: 114
-      Script: {instanceID: 39462}
+      Script: {instanceID: 37272}
     - Class: 114
-      Script: {instanceID: 45076}
+      Script: {instanceID: 39468}
     - Class: 114
-      Script: {instanceID: 49504}
+      Script: {instanceID: 45084}
     - Class: 114
-      Script: {instanceID: 50914}
+      Script: {instanceID: 49512}
     - Class: 114
-      Script: {instanceID: 43026}
+      Script: {instanceID: 50922}
     - Class: 114
-      Script: {instanceID: 37790}
+      Script: {instanceID: 43032}
     - Class: 114
-      Script: {instanceID: 51896}
+      Script: {instanceID: 37796}
     - Class: 114
-      Script: {instanceID: 50468}
+      Script: {instanceID: 51904}
     - Class: 114
-      Script: {instanceID: 45074}
+      Script: {instanceID: 50476}
     - Class: 114
-      Script: {instanceID: 44938}
+      Script: {instanceID: 45082}
     - Class: 114
-      Script: {instanceID: 42994}
+      Script: {instanceID: 44946}
     - Class: 114
-      Script: {instanceID: 46442}
+      Script: {instanceID: 43000}
     - Class: 114
-      Script: {instanceID: 50794}
+      Script: {instanceID: 46450}
     - Class: 114
-      Script: {instanceID: 40212}
+      Script: {instanceID: 50802}
     - Class: 114
-      Script: {instanceID: 51154}
+      Script: {instanceID: 40218}
     - Class: 114
-      Script: {instanceID: 48574}
+      Script: {instanceID: 51162}
     - Class: 114
-      Script: {instanceID: 43344}
+      Script: {instanceID: 48582}
     - Class: 114
-      Script: {instanceID: 47210}
+      Script: {instanceID: 43350}
     - Class: 114
-      Script: {instanceID: 37872}
+      Script: {instanceID: 47218}
     - Class: 114
-      Script: {instanceID: 39550}
+      Script: {instanceID: 37878}
     - Class: 114
-      Script: {instanceID: 50610}
+      Script: {instanceID: 39556}
     - Class: 114
-      Script: {instanceID: 40056}
+      Script: {instanceID: 50618}
     - Class: 114
-      Script: {instanceID: 45410}
+      Script: {instanceID: 40062}
     - Class: 114
-      Script: {instanceID: 38702}
+      Script: {instanceID: 45418}
     - Class: 114
-      Script: {instanceID: 38372}
+      Script: {instanceID: 38708}
     - Class: 114
-      Script: {instanceID: 41536}
+      Script: {instanceID: 38378}
     - Class: 114
-      Script: {instanceID: 51498}
+      Script: {instanceID: 41542}
     - Class: 114
-      Script: {instanceID: 46488}
+      Script: {instanceID: 51506}
     - Class: 114
-      Script: {instanceID: 49738}
+      Script: {instanceID: 46496}
     - Class: 114
-      Script: {instanceID: 44682}
+      Script: {instanceID: 49746}
     - Class: 114
-      Script: {instanceID: 49618}
+      Script: {instanceID: 44690}
     - Class: 114
-      Script: {instanceID: 52124}
+      Script: {instanceID: 49626}
     - Class: 114
-      Script: {instanceID: 41950}
+      Script: {instanceID: 52132}
+    - Class: 114
+      Script: {instanceID: 41956}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -606,6 +645,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
     className: AnimationTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 1f21b6328d275ba17838c0a14e97118f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: LobbyLists
   - hash:
       serializedVersion: 2
       Hash: c09a59d12f535f2a4c806801f2de230e
@@ -1310,7 +1355,7 @@ ScriptsOnlyBuild:
     className: ProbeVolumesOptions
   - hash:
       serializedVersion: 2
-      Hash: bcf40d81cd37e78593f1ec435ec4a2da
+      Hash: bcbb3a99b3c466587c82ebf22604bce2
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: Client
@@ -1622,7 +1667,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerFoldout
   - hash:
       serializedVersion: 2
-      Hash: 4b158fc7fffb2b1867411cb57a2f3bc4
+      Hash: 33ba2d51d1117f6e794d5fddd01620cc
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: ChessBoard
@@ -1716,6 +1761,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Universal.Runtime
     namespaceName: UnityEngine.Rendering.Universal
     className: ForwardRendererData
+  - hash:
+      serializedVersion: 2
+      Hash: 567e60b464fe6039330203387220bceb
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: LobbyItem
   - hash:
       serializedVersion: 2
       Hash: 3773805f0a1ff0ade20d5353c2a21878
@@ -2096,7 +2147,7 @@ ScriptsOnlyBuild:
     className: CinemachineShot
   - hash:
       serializedVersion: 2
-      Hash: 65d0ac433874be743122db4b2a01d700
+      Hash: 07686811b6025e4b59709019c4aef471
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameUI
@@ -2700,18 +2751,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Splines
     namespaceName: UnityEngine.Splines
     className: SplineExtrude
-  - hash:
-      serializedVersion: 2
-      Hash: 1f21b6328d275ba17838c0a14e97118f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: LobbyLists
-  - hash:
-      serializedVersion: 2
-      Hash: 567e60b464fe6039330203387220bceb
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: LobbyItem
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity

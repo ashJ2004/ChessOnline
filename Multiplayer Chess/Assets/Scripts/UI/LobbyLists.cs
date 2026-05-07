@@ -79,7 +79,10 @@ public class LobbyLists : MonoBehaviour
             var joiningLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobby.Id);
             string joinCode = joiningLobby.Data["JoinCode"].Value;
 
-            await Client.Instance.InitRelayClient(joinCode);
+            int timeSeconds = int.Parse(joiningLobby.Data["TimeControl"].Value);
+            int team = int.Parse(joiningLobby.Data["JoiningTeam"].Value);
+
+            await Client.Instance.InitRelayClient(joinCode, timeSeconds, team);
         }
         catch(LobbyServiceException e)
         {
